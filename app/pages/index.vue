@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import type { Product } from '~/stores/products'
-import { useProductsStore } from '~/stores/products'
+import { ref, onMounted } from 'vue'
+import type { Product } from '../stores/products'
+import { useProductsStore } from '../stores/products'
 
 const store = useProductsStore()
 
@@ -11,6 +12,11 @@ const openPurchaseModal = (product: Product) => {
   selectedProduct.value = product
   isPurchaseModalOpen.value = true
 }
+
+onMounted(async () => {
+  await store.fetchProducts()
+})
+
 </script>
 
 <template>
