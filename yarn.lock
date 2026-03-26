@@ -608,16 +608,16 @@
     vue-demi ">=0.13.0"
 
 "@iconify-json/lucide@^1.2.0":
-  version "1.2.98"
-  resolved "https://registry.yarnpkg.com/@iconify-json/lucide/-/lucide-1.2.98.tgz#4ed188034fe3288304e90c53559f0609b36cd798"
-  integrity sha512-Lx2464W8Tty/QEnZ2UPb73nPdML/HpGCj0J0w37jP3/jx3l4fniZBjDxe1TgHiIL5XW9QO3vlx53ZQZ5JsNpzQ==
+  version "1.2.99"
+  resolved "https://registry.yarnpkg.com/@iconify-json/lucide/-/lucide-1.2.99.tgz#92d66888d021f32f350873efc4069428fcbaf809"
+  integrity sha512-XE2Pg8uax2uN3ZbvvnO0C5ADgZOyUgEPiwnhD/xrJwz/bfpWwL3mbDwxntEWB2G1mwo2OqKMF50/jp6ia2QzKw==
   dependencies:
     "@iconify/types" "*"
 
 "@iconify/collections@^1.0.563":
-  version "1.0.665"
-  resolved "https://registry.yarnpkg.com/@iconify/collections/-/collections-1.0.665.tgz#9945d377d542403e1cf35ad8699e28965207beb7"
-  integrity sha512-S5Qb/jy+aa4vRdFEX5l9u6QIfGB4H4BkCwOSNXjHjRTQI0lPKKeRriThSrWudaP3TsSE0B6g0MxbcPMlTwo3NQ==
+  version "1.0.666"
+  resolved "https://registry.yarnpkg.com/@iconify/collections/-/collections-1.0.666.tgz#806873cd8f3a95e9891fc7bf0d342e6854ef1c4d"
+  integrity sha512-dAwFrwbb0exAEJeM9sbLhCTcTcFxUpzvH2fm0dLKCJ10QMna0MSWKEk3Z0QM75QT2d13m9zytjcMSZxUEQt9iw==
   dependencies:
     "@iconify/types" "*"
 
@@ -1812,9 +1812,9 @@
   integrity sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==
 
 "@swc/helpers@^0.5.0", "@swc/helpers@^0.5.12":
-  version "0.5.19"
-  resolved "https://registry.yarnpkg.com/@swc/helpers/-/helpers-0.5.19.tgz#9a8c8a0bdaecfdfb9b8ae5421c0c8e09246dfee9"
-  integrity sha512-QamiFeIK3txNjgUTNppE6MiG3p7TdninpZu0E0PbqVh1a9FNLT2FRhisaa4NcaX52XVhA5l7Pk58Ft7Sqi/2sA==
+  version "0.5.20"
+  resolved "https://registry.yarnpkg.com/@swc/helpers/-/helpers-0.5.20.tgz#d1d0f1e18ff6592c96a4931b4031298619129585"
+  integrity sha512-2egEBHUMasdypIzrprsu8g+OEVd7Vp2MM3a2eVlM/cyFYto0nGz5BX5BTgh/ShZZI9ed+ozEq+Ngt+rgmUs8tw==
   dependencies:
     tslib "^2.8.0"
 

@@ -1,10 +1,20 @@
 <script setup lang="ts">
-import { useProductsStore } from '~/stores/products'
+import { ref, computed, watch } from 'vue'
+import { useProductsStore } from '../stores/products'
+
 
 const store = useProductsStore()
-const searchQuery = ref(store.searchQuery)
-const selectedCategory = ref(store.selectedCategory)
-const priceRange = ref([store.priceRange.min, store.priceRange.max])
+//const searchQuery = ref(store.searchQuery)
+
+const searchQuery = ref(store?.searchQuery || '')
+
+const selectedCategory = ref(store?.selectedCategory || '')
+//const priceRange = ref([store.priceRange.min, store.priceRange.max])
+// Asegúrate de que priceRange siempre tenga valores iniciales válidos
+const priceRange = ref([
+  store?.priceRange?.min || 0, 
+  store?.priceRange?.max || 3000
+])
 
 const categoryItems = computed(() =>
   store.categories.map((cat) => ({
@@ -13,9 +23,19 @@ const categoryItems = computed(() =>
   }))
 )
 
-const debouncedSearch = useDebounceFn((value: string) => {
-  store.setSearchQuery(value)
-}, 300)
+// --- REEMPLAZO NATIVO DE DEBOUNCE ---
+let timeoutId: ReturnType<typeof setTimeout> | null = null
+
+const debouncedSearch = (value: string) => {
+  // Si hay un temporizador pendiente, lo cancelamos
+  if (timeoutId) clearTimeout(timeoutId)
+  
+  // Creamos un nuevo temporizador para ejecutar la búsqueda después de 300ms
+  timeoutId = setTimeout(() => {
+    store.setSearchQuery(value)
+    // store.fetchProducts() // Requisito Senior: Consulta real a la API [cite: 98]
+  }, 300)
+}
 
 watch(searchQuery, (value) => {
   debouncedSearch(value)
