@@ -14,6 +14,7 @@ type HydrationStrategies = {
 type LazyComponent<T> = DefineComponent<HydrationStrategies, {}, {}, {}, {}, {}, {}, { hydrated: () => void }> & T
 
 
+export const CartDrawer: typeof import("../app/components/CartDrawer.vue")['default']
 export const CartSummary: typeof import("../app/components/CartSummary.vue")['default']
 export const CatalogFilters: typeof import("../app/components/CatalogFilters.vue")['default']
 export const ProductCard: typeof import("../app/components/ProductCard.vue")['default']
@@ -103,6 +104,7 @@ export const Head: typeof import("../node_modules/nuxt/dist/head/runtime/compone
 export const Html: typeof import("../node_modules/nuxt/dist/head/runtime/components")['Html']
 export const Body: typeof import("../node_modules/nuxt/dist/head/runtime/components")['Body']
 export const NuxtIsland: typeof import("../node_modules/nuxt/dist/app/components/nuxt-island")['default']
+export const LazyCartDrawer: LazyComponent<typeof import("../app/components/CartDrawer.vue")['default']>
 export const LazyCartSummary: LazyComponent<typeof import("../app/components/CartSummary.vue")['default']>
 export const LazyCatalogFilters: LazyComponent<typeof import("../app/components/CatalogFilters.vue")['default']>
 export const LazyProductCard: LazyComponent<typeof import("../app/components/ProductCard.vue")['default']>

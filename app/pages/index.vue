@@ -9,6 +9,7 @@ const selectedProduct = ref<Product | null>(null)
 const isPurchaseModalOpen = ref(false)
 
 const openPurchaseModal = (product: Product) => {
+  console.log('[index.vue] Abriendo modal para:', product.name) // Debug para confirmar el click
   selectedProduct.value = product
   isPurchaseModalOpen.value = true
 }
@@ -36,41 +37,35 @@ onMounted(async () => {
 
     <UMain>
       <UContainer class="py-8">
-        <div class="mb-8">
-          <h1 class="text-3xl font-bold text-default mb-2">Catálogo de Productos</h1>
-          <p class="text-muted">Descubre nuestra selección de tecnología premium</p>
+        <div class="mb-8 flex justify-between items-end">
+          <div>
+            <h1 class="text-3xl font-bold text-default mb-2">Catálogo de Productos</h1>
+            <p class="text-muted">Descubre nuestra selección de tecnología premium</p>
+          </div>
+          <UCard class="p-1">
+            <CartSummary />
+          </UCard>
         </div>
 
         <UCard class="mb-8">
           <CatalogFilters />
+
         </UCard>
 
         <div v-if="store.paginatedProducts.length > 0">
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            <ProductCard
-              v-for="product in store.paginatedProducts"
-              :key="product.id"
-              :product="product"
-              @buy="openPurchaseModal"
-            />
+            <ProductCard v-for="product in store.paginatedProducts" :key="product.id" :product="product"
+              @buy="openPurchaseModal" />
           </div>
 
           <div v-if="store.totalPages > 1" class="flex justify-center">
-            <UPagination
-              v-model="store.currentPage"
-              :total="store.filteredProducts.length"
-              :items-per-page="store.itemsPerPage"
-              show-edges
-            />
+            <UPagination v-model="store.currentPage" :total="store.filteredProducts.length"
+              :items-per-page="store.itemsPerPage" show-edges />
           </div>
         </div>
 
-        <UEmpty
-          v-else
-          icon="i-lucide-search-x"
-          title="No se encontraron productos"
-          description="Intenta ajustar los filtros de búsqueda"
-        />
+        <UEmpty v-else icon="i-lucide-search-x" title="No se encontraron productos"
+          description="Intenta ajustar los filtros de búsqueda" />
       </UContainer>
     </UMain>
 
@@ -87,9 +82,8 @@ onMounted(async () => {
       </template>
     </UFooter>
 
-    <PurchaseModal
-      v-model:open="isPurchaseModalOpen"
-      :product="selectedProduct"
-    />
+    <CartDrawer />
+
+    <PurchaseModal v-model:open="isPurchaseModalOpen" :product="selectedProduct" />
   </div>
 </template>

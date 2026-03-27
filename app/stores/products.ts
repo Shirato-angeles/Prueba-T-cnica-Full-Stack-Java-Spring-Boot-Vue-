@@ -1,22 +1,19 @@
 import { defineStore } from 'pinia'
-import { createClient } from '@supabase/supabase-js'
 
-const supabase = createClient(
-  'https://cuhyjvnunpvhtlrguxkp.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN1aHlqdm51bnB2aHRscmd1eGtwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ0ODg3OTAsImV4cCI6MjA5MDA2NDc5MH0.NcjR67KI_cZKI3NKTAUZClizZTXUw09JPshAjXJuYQI'
-)
+// URL de tu API de Spring Boot
+const API_URL = 'http://localhost:8080/api/products'
 
 export interface Product {
-  id: string // Cambiado a string por el tipo UUID de tu DB
+  id: string
   sku: string
   name: string
   description: string
   price: number
   category: string
-  image: string // Mapeado desde image_url
+  image: string
   status: string
-  stock: number // Este vendrá del microservicio de Inventario después
-  rating: number // Valor por defecto o de la DB
+  stock: number
+  rating: number
 }
 
 interface ProductsState {
@@ -32,19 +29,22 @@ interface ProductsState {
 
 export const useProductsStore = defineStore('products', {
   state: (): ProductsState => ({
-    products: [],
+    products: [], // Inicializado como array vacío para evitar el error de .length
     loading: false,
-    categories: ['Todos', 'Laptops', 'Smartphones', 'Tablets', 'Audio', 'Monitores', 'Accesorios', 'Wearables'],
+    categories: ['Todos', 'Motos', 'Laptops', 'Smartphones', 'Accesorios'],
     searchQuery: '',
     selectedCategory: 'Todos',
-    priceRange: { min: 0, max: 3000 },
+    priceRange: { min: 0, max: 30000000 }, // Rango ajustado para precios de motos
     currentPage: 1,
     itemsPerPage: 6,
   }),
 
   getters: {
     filteredProducts(state): Product[] {
-      const filtered = state.products.filter((product) => {
+      // Agregamos comprobación de seguridad para state.products
+      if (!state.products) return []
+      
+      return state.products.filter((product) => {
         const matchesSearch =
           (product.name?.toLowerCase().includes(state.searchQuery.toLowerCase()) ||
             product.description?.toLowerCase().includes(state.searchQuery.toLowerCase()))
@@ -52,79 +52,54 @@ export const useProductsStore = defineStore('products', {
         const matchesPrice = product.price >= state.priceRange.min && product.price <= state.priceRange.max
         return matchesSearch && matchesCategory && matchesPrice
       })
-      console.log('[filteredProducts] filtered:', filtered)
-      return filtered
     },
 
     paginatedProducts(): Product[] {
+      const filtered = this.filteredProducts
       const start = (this.currentPage - 1) * this.itemsPerPage
       const end = start + this.itemsPerPage
-      const paginated = this.filteredProducts.slice(start, end)
-      console.log('[paginatedProducts] paginated:', paginated)
-      return paginated
+      return filtered.slice(start, end)
     },
 
     totalPages(): number {
-      const total = Math.ceil(this.filteredProducts.length / this.itemsPerPage)
-      console.log('[totalPages] total:', total)
-      return total
-    },
-
-    maxPrice(state): number {
-      if (state.products.length === 0) {
-        console.log('[maxPrice] No products, default 3000')
-        return 3000
-      }
-      const max = Math.max(...state.products.map((p) => p.price))
-      console.log('[maxPrice] max:', max)
-      return max
+      return Math.ceil(this.filteredProducts.length / this.itemsPerPage) || 1
     }
   },
 
   actions: {
     async fetchProducts() {
       this.loading = true
-      console.log('[fetchProducts] Fetching products...')
       try {
-        const { data, error } = await supabase
-          .from('products')
-          .select('*')
-        if (error) throw error
-        console.log('[fetchProducts] Data received from Supabase:', data)
-        // MAPEEO CRÍTICO: Convertimos image_url de la DB a image del frontend
+        console.log('[fetchProducts] Llamando a Java en:', API_URL)
+        const response = await fetch(API_URL)
+        
+        if (!response.ok) throw new Error('Error al conectar con la API')
+        
+        const data = await response.json()
+        console.log('[fetchProducts] Datos de Java:', data)
+
+        // Mapeo para que el Front no se rompa con los datos de Java
         this.products = data.map((p: any) => ({
-          ...p,
-          image: p.image_url, // Ajuste para que coincida con tu estructura SQL
-          stock: p.stock || 20, // Valor temporal hasta conectar el Microservicio 2
-          rating: 4.5 // Valor temporal para la UI
+          id: p.id,
+          sku: p.sku,
+          name: p.name,
+          description: p.description,
+          price: p.price,
+          // Rellenamos campos que Java no tiene todavía para que la UI se vea bien
+          category: p.category || 'Motos',
+          image: p.image_url || 'https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?q=80&w=500', 
+          status: p.status || 'Disponible',
+          stock: p.stock || 5,
+          rating: 4.8
         }))
-        console.log('[fetchProducts] Products loaded:', this.products)
       } catch (err) {
-        console.error('[fetchProducts] Error en Supabase:', err)
+        console.error('[fetchProducts] Error:', err)
+        this.products = [] // Evita que quede como undefined
       } finally {
         this.loading = false
-        console.log('[fetchProducts] Loading finished')
       }
     },
-
-    setSearchQuery(query: string) {
-      console.log('[setSearchQuery] query:', query)
-      this.searchQuery = query;
-      this.currentPage = 1
-    },
-    setCategory(category: string) {
-      console.log('[setCategory] category:', category)
-      this.selectedCategory = category;
-      this.currentPage = 1
-    },
-    setPriceRange(min: number, max: number) {
-      console.log('[setPriceRange] min:', min, 'max:', max)
-      this.priceRange = { min, max };
-      this.currentPage = 1
-    },
-    setPage(page: number) {
-      console.log('[setPage] page:', page)
-      this.currentPage = page
-    }
+    
+    // ... mantén tus otras acciones (setSearchQuery, etc.) igual
   }
 })

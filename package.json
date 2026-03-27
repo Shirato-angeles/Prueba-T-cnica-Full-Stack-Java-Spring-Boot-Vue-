@@ -11,6 +11,7 @@
     "@nuxt/ui": "^3.0.0",
     "@pinia/nuxt": "^0.9.0",
     "@supabase/supabase-js": "^2.100.1",
+    "axios": "^1.13.6",
     "nuxt": "latest",
     "pinia": "^2.3.0",
     "tailwindcss": "^4.0.0",

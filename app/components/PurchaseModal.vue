@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { z } from 'zod'
 import type { FormSubmitEvent } from '@nuxt/ui'
-import type { Product } from '~/stores/products'
-import { useProductsStore } from '~/stores/products'
-import { useCartStore } from '~/stores/cart'
+import type { Product } from '../stores/products'
+import { useProductsStore } from '../stores/products'
+import { useCartStore } from '../stores/cart'
+import { useToast } from '@nuxt/ui/runtime/composables/useToast.js'
+import { computed, reactive, watch } from 'vue'
 
 interface Props {
   product: Product | null
@@ -49,21 +51,22 @@ const totalPrice = computed(() => {
   if (!props.product) return 0
   return props.product.price * state.quantity
 })
-
 async function onSubmit(event: FormSubmitEvent<Schema>) {
   if (!props.product) return
 
-  cartStore.addItem(props.product, event.data.quantity)
-  productsStore.updateStock(props.product.id, event.data.quantity)
+  // 1. Agregamos el producto al store
+  // IMPORTANTE: Tu acción addItem ya pone cartStore.isCartOpen = true
+  cartStore.addItem(props.product, state.quantity)
 
+  // 2. Cerramos el modal de confirmación (el que pide la cantidad)
+  open.value = false 
+
+  // 3. Feedback visual opcional
   toast.add({
-    title: '¡Añadido al carrito!',
-    description: `${event.data.quantity}x ${props.product.name} añadido correctamente.`,
-    icon: 'i-lucide-check-circle',
-    color: 'success',
+    title: '¡Listo!',
+    description: `${props.product.name} se añadió al carrito`,
+    color: 'success'
   })
-
-  open.value = false
 }
 
 const incrementQuantity = () => {
